@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarvato Bhadra Mandal Sanatan</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your external CSS file Sarvato Bhadra Mandal Sanatan Vedic Trust -->
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Courses</a></li>
+                <li><a href="#">Events</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </nav>
+        <div class="logo">
+            <img src="logo.png" alt="Sarvato Bhadra Mandal Sanatan Vedic Trust Vedic Gyan Gurukul Logo">
+        </div>
+    </header>
+    
+    <main>
+        <section class="hero">
+            <h1>Welcome to Sarvato Bhadra Mandal Sanatan Vedic Trust</h1>
+            <p>Unlock the wisdom of the Vedas and ancient knowledge.</p>
+            <a href="#" class="btn">Contact for vedic astrology  & yagya</a>
+        </section>
+<section class="slideshow-container">
+		    <div class="mySlides fade">
+			<img src="image1.jpg" alt="Image 1">
+		    </div>
+		    <div class="mySlides fade">
+			<img src="image2.jpg" alt="Image 2">
+		    </div>
+		    <div class="mySlides fade">
+			<img src="image3.jpg" alt="Image 3">
+		    </div>
+	    </section>
+        <section class="courses">
+            <h2>Our Courses</h2>
+            <!-- Add course cards here -->
+        </section>
+
+        <section class="events">
+            <h2>Upcoming Events</h2>
+            <!-- Add event cards here -->
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Sarvato Bhadra Mandal Sanatan Vedic Trust</p>
+    </footer>
+    <script>
+    let slideIndex = 0;
+    showSlides();
+
+    function showSlides() {
+        let slides = document.getElementsByClassName("mySlides");
+        let dots = document.getElementsByClassName("dot");
+        for (let i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        slideIndex++;
+        if (slideIndex > slides.length) {
+            slideIndex = 1;
+        }
+        for (let i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+        }
+        slides[slideIndex - 1].style.display = "block";
+        dots[slideIndex - 1].className += " active";
+        setTimeout(showSlides, 2000); // Change image every 2 seconds
+    }
+    </script>
+</body>
+</html>
+
