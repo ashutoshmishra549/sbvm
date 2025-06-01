@@ -87,9 +87,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
   <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
     const supabaseUrl = 'https://tuxzsmppouzdexyactye.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1eHpzbXBwb3V6ZGV4eWFjdHllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3NTY1MjEsImV4cCI6MjA2NDMzMjUyMX0.R-GXO2PMM2aMNSvtt_y2BZry8P4LGwUMablmZY7JZb0';
@@ -100,7 +99,7 @@
     const markdownPreview = document.getElementById('markdownPreview');
     let markdownMode = false;
 
-    window.toggleEditorMode = () => {
+    const toggleEditorMode = () => {
       markdownMode = !markdownMode;
       document.getElementById('editor').parentElement.classList.toggle('d-none', markdownMode);
       markdownEditor.classList.toggle('d-none', !markdownMode);
@@ -108,21 +107,27 @@
       document.getElementById('modeToggle').innerText = markdownMode ? 'Switch to Rich Text' : 'Switch to Markdown';
     };
 
-    window.renderMarkdownPreview = () => {
+    const renderMarkdownPreview = () => {
       markdownPreview.innerHTML = marked.parse(markdownEditor.value);
     };
 
-    window.saveEntry = async () => {
+    const saveEntry = async () => {
       const content = markdownMode ? markdownEditor.value : editor.root.innerHTML;
       const entry = { content, date: new Date().toISOString(), markdown: markdownMode };
       const entries = JSON.parse(localStorage.getItem('entries') || '[]');
       entries.unshift(entry);
       localStorage.setItem('entries', JSON.stringify(entries));
-      await supabase.from('New_Table').insert([entry]);
       renderEntries();
+
+      // Save to Supabase
+      try {
+        await supabase.from('New_Table').insert([entry]);
+      } catch (err) {
+        console.error('Supabase insert error:', err.message);
+      }
     };
 
-    window.exportEntries = () => {
+    const exportEntries = () => {
       const entries = localStorage.getItem('entries');
       const blob = new Blob([entries], { type: 'application/json' });
       const a = document.createElement('a');
@@ -131,7 +136,7 @@
       a.click();
     };
 
-    window.renderEntries = () => {
+    const renderEntries = () => {
       const container = document.getElementById('entries');
       const entries = JSON.parse(localStorage.getItem('entries') || '[]');
       const query = document.getElementById('searchInput').value.toLowerCase();
@@ -158,19 +163,41 @@
       renderEntries();
     };
 
-    window.toggleTheme = () => {
+    const toggleTheme = () => {
       document.body.classList.toggle('theme-dark');
     };
 
-    window.syncCloud = async () => {
+    const syncCloud = async () => {
       const entries = JSON.parse(localStorage.getItem('entries') || '[]');
       for (let entry of entries) {
         await supabase.from('New_Table').insert([entry]);
       }
-      alert('Entries synced to Supabase!');
+      alert('Entries synced to cloud!');
+    };
+
+    const fetchEntriesFromSupabase = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('New_Table')
+          .select('*')
+          .order('date', { ascending: false });
+
+        if (error) throw error;
+
+        const localEntries = JSON.parse(localStorage.getItem('entries') || '[]');
+        const combined = [...data, ...localEntries].filter((entry, index, self) =>
+          index === self.findIndex(e => e.date === entry.date && e.content === entry.content)
+        );
+
+        localStorage.setItem('entries', JSON.stringify(combined));
+        renderEntries();
+      } catch (err) {
+        console.error('Error fetching entries:', err.message);
+      }
     };
 
     renderEntries();
+    fetchEntriesFromSupabase();
   </script>
 </body>
 
